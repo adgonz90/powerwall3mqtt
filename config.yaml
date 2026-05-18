@@ -3,7 +3,7 @@ description: "A bridge between a Tesla Powerwall3 and MQTT"
 version: "0.7.0"
 slug: "powerwall3mqtt"
 url: "https://github.com/adgonz90/powerwall3mqtt"
-image: "ghcr.io/adgonz90/{arch}-addon-powerwall3mqtt"
+image: "ghcr.io/adgonz90/addon-powerwall3mqtt"
 init: false
 stage: experimental
 arch:

@@ -1,5 +1,5 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+ARG BUILD_ARCH=amd64
+FROM ghcr.io/home-assistant/${BUILD_ARCH}-base:latest
 
 # Copy data for add-on
 RUN apk add --no-cache python3 py3-pip py3-pyaml py3-cachetools py3-requests py3-protobuf tini
