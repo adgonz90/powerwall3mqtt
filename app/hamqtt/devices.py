@@ -372,6 +372,13 @@ class TeslaSystem(Device):
                         e)
 
 
+    def set_all_unavailable(self) -> None:
+        """Marks this device and all nested devices as unavailable"""
+        self.set_updated(False)
+        for item in self.powerwalls.values():
+            item.set_updated(False)
+
+
     def get_discovery(self, prefix: str, will_topic: str) -> dict:
         """Generates an MQTT discovery message to send to HA"""
         msg = super().get_discovery(prefix=prefix, will_topic=will_topic)

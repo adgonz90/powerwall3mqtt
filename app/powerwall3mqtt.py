@@ -26,7 +26,7 @@ import hamqtt.devices
 import pytedapi
 import pytedapi.exceptions
 
-from hamqtt.devices import OFFLINE
+from hamqtt.devices import OFFLINE, ONLINE
 
 
 # Generate a Client ID with the publish prefix.
@@ -167,6 +167,8 @@ class Powerwall3MQTT:
                 client.message_callback_add(topic, on_ha_status)
                 client.subscribe(topic)
                 logger.info("Subscribed to MQTT topic '%s'", topic)
+                client.publish(WILL_TOPIC, ONLINE, retain=True)
+                logger.debug("Published online status to will topic '%s'", WILL_TOPIC)
             else:
                 logger.error("Failed to connect, return code = %s", rc.getName())
 
@@ -175,7 +177,7 @@ class Powerwall3MQTT:
             callback_api_version=mqtt_client.CallbackAPIVersion.VERSION2)
         client.on_connect = on_connect
         client.user_data_set(self)
-        client.will_set(WILL_TOPIC, OFFLINE)
+        client.will_set(WILL_TOPIC, OFFLINE, retain=True)
         logger.debug("MQTT will set on '%s' to '%s'", WILL_TOPIC, OFFLINE)
         if self._config['mqtt_ssl']:
             client.tls_set(
@@ -267,7 +269,7 @@ class Powerwall3MQTT:
                     if key.fileobj == ha_status:
                         self.process_ha_status(ha_status, mqtt, tesla)
                     elif key.fileobj == self._update_loop[0]:
-                        self._update_loop[0].recv(1)
+                        self._update_loop[0].recv(4)  # drain backlog if update took >poll_interval
                         logger.debug("Processing update from timing_loop")
                         self.update(mqtt, tesla, True)
                         timeout_loglevel = logging.WARNING
@@ -277,6 +279,12 @@ class Powerwall3MQTT:
                     logger.warning(
                         "Increasing poll interval by 1s to %d",
                         self._config['tedapi_poll_interval'])
+                except pytedapi.exceptions.TEDAPINotConnectedException:
+                    tesla.set_all_unavailable()
+                    self.publish_states(mqtt, tesla)
+                    logger.log(timeout_loglevel,
+                        "Lost connection to Powerwall after retries, marking entities unavailable")
+                    timeout_loglevel = logging.INFO
                 except pytedapi.exceptions.TEDAPIException as e:
                     # Likely fatal, bail out
                     self.set_running(False)
@@ -361,10 +369,8 @@ class Powerwall3MQTT:
                     self._update_loop[1].send(b'\1')
 
 
-    def update(self, mqtt, tesla, update=False):
-        """Method to get Tesla system state messages and publish them to MQTT"""
-        if update:
-            tesla.update()
+    def publish_states(self, mqtt, tesla):
+        """Method to publish Tesla system state messages to MQTT"""
         sysstate = tesla.get_states(prefix=self._config['mqtt_base_topic'])
         for message in sysstate:
             result = mqtt.publish(message['topic'], json.dumps(message['payload']))
@@ -373,6 +379,13 @@ class Powerwall3MQTT:
                 logger.debug("message = %s", json.dumps(message['payload']))
             else:
                 logger.warning("Failed to send '%s' to '%s'", message['topic'], message['payload'])
+
+
+    def update(self, mqtt, tesla, update=False):
+        """Method to get Tesla system state messages and publish them to MQTT"""
+        if update:
+            tesla.update()
+        self.publish_states(mqtt, tesla)
 
 
 

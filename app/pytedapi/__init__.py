@@ -214,6 +214,7 @@ class TeslaEnergyDeviceAPI:
             @tenacity.retry(
                wait=tenacity.wait_exponential(multiplier=2, min=2, max=32),
                stop=tenacity.stop_after_attempt(5),
+               reraise=True,
                retry=(tenacity.retry_if_exception_type(requests.exceptions.ConnectionError) |
                       tenacity.retry_if_exception_type(requests.exceptions.Timeout))
             )
@@ -225,7 +226,7 @@ class TeslaEnergyDeviceAPI:
             try:
                 r = _make_request()
             except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-                raise exceptions.TEDAPIException("Failed to reach host after multiple retries") from e
+                raise exceptions.TEDAPINotConnectedException() from e
     
             self.check_http_response(r)
         return r
@@ -255,6 +256,7 @@ class TeslaEnergyDeviceAPI:
             @tenacity.retry(
                 wait=tenacity.wait_exponential(multiplier=2, min=2, max=32),
                 stop=tenacity.stop_after_attempt(5),
+                reraise=True,
                 retry=(tenacity.retry_if_exception_type(requests.exceptions.ConnectionError) |
                        tenacity.retry_if_exception_type(requests.exceptions.Timeout))
             )
@@ -268,7 +270,7 @@ class TeslaEnergyDeviceAPI:
             try:
                 r = _make_request()
             except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-                raise exceptions.TEDAPIException("Failed to reach host after multiple retries") from e
+                raise exceptions.TEDAPINotConnectedException() from e
     
             self.check_http_response(r)
             self._pwcooldown = time.perf_counter()
