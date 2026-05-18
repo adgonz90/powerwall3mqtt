@@ -288,7 +288,7 @@ class Powerwall3MQTT:
                 except pytedapi.exceptions.TEDAPIException as e:
                     # Likely fatal, bail out
                     self.set_running(False)
-                    raise e
+                    raise
                 except requests.exceptions.ConnectTimeout as e:
                     # Likely Powerwall offline, skip interval
                     logger.log(timeout_loglevel, "HTTP connect timeout, skipping interval.")

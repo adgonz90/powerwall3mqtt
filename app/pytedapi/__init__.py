@@ -207,7 +207,7 @@ class TeslaEnergyDeviceAPI:
             TEDAPIException
         """
         if not force and self._pwcooldown > time.perf_counter():
-            raise exceptions.TEDAPIRateLimitedException()
+            raise exceptions.TEDAPIRateLimitingException()
         with self._api_lock:
             url = f"https://{self._gw_ip}/{path}"
 
@@ -249,7 +249,7 @@ class TeslaEnergyDeviceAPI:
             TEDAPIException
         """
         if not force and self._pwcooldown > time.perf_counter():
-            raise exceptions.TEDAPIRateLimitedException()
+            raise exceptions.TEDAPIRateLimitingException()
         with self._api_lock:
             url = f"https://{self._gw_ip}/{path}"
 
