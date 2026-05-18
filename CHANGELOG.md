@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.7.0] - 2026-05-17
+
+### Fixed
+
+- Fix rate limit exception type mismatch and malformed exception messages.
+- Mark all entities unavailable when the Powerwall connection is lost, restoring availability on reconnect.
+- Add tenacity to Dockerfile.standalone, which was missing after standalone support was introduced.
+
+## [0.6.0] - 2026-01-22
+
+### Added
+
+- Standalone deployment support: run without Home Assistant OS using Docker Compose and environment variable configuration.
+- Added tenacity for automatic retry on transient connection failures.
+
+### Fixed
+
+- Fix indentation for `check_http_response` call.
+
 ## [0.5.2] - 2025-06-09
 
 ### Fixed
@@ -139,7 +158,9 @@
 
 - [Issue #8](https://github.com/slyglif/powerwall3mqtt/issues/8): Shutdowns weren't clean, preventing relavent logs from showing
 
-[unreleased]: https://github.com/slyglif/powerwall3mqtt/compare/v0.5.2...HEAD
+[unreleased]: https://github.com/adgonz90/powerwall3mqtt/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/adgonz90/powerwall3mqtt/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/adgonz90/powerwall3mqtt/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/slyglif/powerwall3mqtt/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/slyglif/powerwall3mqtt/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/slyglif/powerwall3mqtt/compare/v0.4.0...v0.5.0
@@ -154,6 +175,6 @@
 [0.1.2]: https://github.com/slyglif/powerwall3mqtt/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/slyglif/powerwall3mqtt/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/slyglif/powerwall3mqtt/compare/v0.0.6...v0.1.0
-[0.0.6]: https://github.com/slyglif/powerwall3mqtt/compare/v0.0.5...v0.1.6
-[0.0.5]: https://github.com/slyglif/powerwall3mqtt/compare/v0.0.4...v0.1.5
-[0.0.4]: https://github.com/slyglif/powerwall3mqtt/compare/v0.0.3...v0.1.4
+[0.0.6]: https://github.com/slyglif/powerwall3mqtt/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/slyglif/powerwall3mqtt/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/slyglif/powerwall3mqtt/compare/v0.0.3...v0.0.4
