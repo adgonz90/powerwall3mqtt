@@ -10,8 +10,8 @@ RUN apk add --no-cache \
     py3-protobuf \
     tini
 
-# Install paho-mqtt via pip (not available in Alpine packages)
-RUN pip3 install --break-system-packages paho-mqtt
+# Install pip packages (not available in Alpine repos)
+RUN pip3 install --break-system-packages paho-mqtt tenacity
 
 # Copy application code
 COPY app /app
